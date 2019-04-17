@@ -110,6 +110,10 @@ class MakeDirectory:
 		sys = System('mkdir', path)
 		sys.run()
 
+	def mkdir_sub(self, path):
+		sys = System('mkdir', path)
+		sys.sub_run()
+
 #%%
 class MetaBot():
 	def __init__(self, path):

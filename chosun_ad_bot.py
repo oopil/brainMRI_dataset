@@ -42,15 +42,14 @@ class ADBrainMRI(MetaBot):
         mkdir_bot = MakeDirectory()
         a = self.convert_path(base_folder_path, base_folder_path, 'empty_copy')
         print(a)
-        mkdir_bot.mkdir(a)
-        assert False
+        mkdir_bot.mkdir_sub(a)
 
         for dir_path in dir_path_list:
             print(base_folder_path)
             print(dir_path)
             print(self.convert_path(base_folder_path, dir_path, 'empty_copy'))
             new_dir_path = self.convert_path(base_folder_path, dir_path, 'empty_copy')
-            # mkdir_bot.mkdir(new_dir_path)
+            mkdir_bot.mkdir_sub(new_dir_path)
 
     def convert_path(self, base_folder_path, path, new_dir_name):
         folder_path_split = [e for e in base_folder_path.split('/') if e != '']
@@ -65,3 +64,6 @@ class ADBrainMRI(MetaBot):
         folder_path_split = folder_path_split + path_split[i+1:]
         new_dir_path = "/" + "/".join(folder_path_split)
         return new_dir_path
+
+    def copy_only_useful_file(self, file_list:list)->None:
+        pass
