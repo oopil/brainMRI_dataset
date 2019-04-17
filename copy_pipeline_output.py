@@ -2,40 +2,36 @@ import os
 import sys
 import time
 import argparse
-from class_metabot import *
+from chosun_ad_bot import *
 
 """parsing and configuration"""
-
-
 def parse_args() -> argparse:
     parser = argparse.ArgumentParser()
     parser.add_argument('--index', type=int, default='0', help='the index of class from 0 to 3')
     parser.add_argument('--sub_divide_num', type=int, default='1',
                         help='the number to divide the group to run multiple pipeline in parallel way')
     parser.add_argument('--sub_index', type=int, default='0', help='the index of group inside the class')
-
-    parser.add_argument('--file_to_copy', type=str, default=\
-        'T1.nii aparc+aseg.nii aparc.DKTatlas+aseg.nii norm.nii \
-        aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii \
-        orig.nii aseg.auto_noCCseg.nii orig_nu.nii wmparc.nii aseg.nii')
-    # 'T1.nii aseg.presurf.hypos.nii filled.nii rh.ribbon.nii aparc+aseg.nii aseg.presurf.nii lh.ribbon.nii ribbon.nii aparc.DKTatlas+aseg.nii brain.finalsurfs.nii norm.nii wm.asegedit.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii brainmask.auto.nii orig.nii wm.seg.nii aseg.auto_noCCseg.nii brainmask.nii orig_nu.nii wmparc.nii aseg.nii ctrl_pts.nii rawavg.nii'
-    return parser.parse_args()
-
-
-def extr_meta_data(class_name) -> list:
-    print('start to extract meta data from dataset folder')
+    parser.add_argument('--hi', type=int, default='0', help='the index of group inside the class')
     # base_folder_path = '/home/sp/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # desktop setting
-    base_folder_path = '/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3' # desktop setting
+    # base_folder_path = '/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3' # desktop setting
     # base_folder_path = '/user/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # server 144 setting
     # base_folder_path = '/home/soopil/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # server202 account
     # base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
+    parser.add_argument('--base_folder_path', type=str, default='/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3')
+    parser.add_argument('--file_to_copy', type=str, default=\
+        'T1.nii aparc+aseg.nii aparc.DKTatlas+aseg.nii norm.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii orig.nii aseg.auto_noCCseg.nii orig_nu.nii wmparc.nii aseg.nii')
+    # 'T1.nii aseg.presurf.hypos.nii filled.nii rh.ribbon.nii aparc+aseg.nii aseg.presurf.nii lh.ribbon.nii ribbon.nii aparc.DKTatlas+aseg.nii brain.finalsurfs.nii norm.nii wm.asegedit.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii brainmask.auto.nii orig.nii wm.seg.nii aseg.auto_noCCseg.nii brainmask.nii orig_nu.nii wmparc.nii aseg.nii ctrl_pts.nii rawavg.nii'
+    print(parser.parse_args())
+    return parser.parse_args()
 
-    bot = MetaBot(base_folder_path)
+def extr_meta_data(class_name, folder_path) -> list:
+    print('start to extract meta data from dataset folder')
+    base_folder_path = folder_path
+    bot = ADBrainMRI(base_folder_path)
     meta_list = bot.MRI_chosun(class_name)
     print(class_name, len(meta_list), meta_list)
     del bot
     return meta_list
-
 
 def chosun_MRI_copy_use_only_pipeline(args) -> None:
     '''
@@ -47,22 +43,24 @@ def chosun_MRI_copy_use_only_pipeline(args) -> None:
     index = args.index
     sub_index = args.sub_index
     sub_divide_num = args.sub_divide_num
+
+    base_folder_path = args.base_folder_path
     file_to_copy_str = args.file_to_copy
     file_to_copy_list = [e for e in file_to_copy_str.split(' ') if e != '']
 
     print(file_to_copy_str)
     print(file_to_copy_list)
-    # for file in file_to_copy_list:
-    #     print(file)
-    assert False
+    print(base_folder_path)
 
     # is_remove_exist_folder = True
     is_remove_exist_folder = False
-    bot = MetaBot('.')
+    bot = ADBrainMRI('.')
+    bot.copy_directory_only(base_folder_path)
+
+    assert False
 
     # need to change the result file name according to the pipeline options.
-    result_file_name = 'chosun_MRI_pipeline_finish_list_' + str(index) + '_' + str(sub_index) + '_' + str(
-        sub_divide_num - 1)
+    result_file_name = 'chosun_MRI_pipeline_finish_list_' + str(index) + '_' + str(sub_index) + '_' + str(sub_divide_num - 1)
     contents = []
     if bot.is_exist(result_file_name):
         fd = open(result_file_name, 'rt')
@@ -72,7 +70,7 @@ def chosun_MRI_copy_use_only_pipeline(args) -> None:
 
     fd = open(result_file_name, 'a+t')
     class_name = ['aAD', 'ADD', 'mAD', 'NC']
-    total_meta_data_list = extr_meta_data(class_name[index])
+    total_meta_data_list = extr_meta_data(class_name[index], base_folder_path)
     total_data_count = len(total_meta_data_list)
 
     pipeline_data_num = total_data_count // sub_divide_num
@@ -185,6 +183,10 @@ def test():
     contents = fd.readlines()
     print(contents)
     fd.close()
+
+def print_list(l:list)->None:
+    for line in l:
+        print(line)
 
 def main() -> None:
     # test()
