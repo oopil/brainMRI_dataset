@@ -51,7 +51,7 @@ class System():
 		print(self.command)
 		program = self.command.split()[0]
 		process = subprocess.Popen(self.command.split())
-		time.sleep(0.1)
+		time.sleep(0.01)
 		process.wait()
 		print("{} process ends".format(program))
 
@@ -113,6 +113,18 @@ class MakeDirectory:
 	def mkdir_sub(self, path):
 		sys = System('mkdir', path)
 		sys.sub_run()
+#%%
+class FileCopy:
+	def __init__(self):
+		pass
+
+	def copy_file(self, path):
+		sys = System('copy', path)
+		sys.sub_run()
+
+	def copy_dir(self, path):
+		sys = System('copy -r', path)
+		sys.sub_run()
 
 #%%
 class MetaBot():
@@ -122,6 +134,11 @@ class MetaBot():
 		self.image_list = []
 		self.img_l_mv = []
 		self.type = ['T1_DSPGR','T2','DTI','fMRI']
+
+		self.remover = FileRemover()
+		self.Copy = FileCopy()
+		self.Dir = MakeDirectory()
+
 
 	def get_fld_by_type(self, fld_type):
 		for fld_name in self.type:
@@ -161,8 +178,16 @@ class MetaBot():
 
 #%%
 	def make_directory(self, dir_path):
-		Copy = MakeDirectory()
-		Copy.mkdir(dir_path)
+		self.Dir.mkdir(dir_path)
+
+	def make_directory_sub(self, dir_path):
+		self.Dir.mkdir_sub(dir_path)
+# %%
+	def copy_file(self, path1, path2):
+		self.Copy.copy_file(path1+' '+path2)
+
+	def copy_dir(self, path1, path2):
+		self.Copy.copy_dir(path1+' '+path2)
 #%%
 	def remove_same_file(self, fld_list):
 		for fld in fld_list:
@@ -178,14 +203,13 @@ class MetaBot():
 			self.rm_sm_file(old, new)
 
 	def rm_sm_file(self, f1, f2):
-		remover = FileRemover()
 		if self.gz_clone(f1,f2) or self.f_clone(f1,f2):
 			print('there are files with same name and diff extensions')
-			remover.remove(f2)
+			self.remover.remove(f2)
 		elif self.gz_clone(f2,f1) or self.f_clone(f2,f1):
 			print('there are files with same name and diff extensions')
-			remover.remove(f1)
-		del remover
+			self.remover.remove(f1)
+		del self.remover
 #%%
 	def f_clone(self, f1, f2):
 		if 'f'+f1 ==f2: return True

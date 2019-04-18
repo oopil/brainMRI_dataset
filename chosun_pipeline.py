@@ -2,7 +2,7 @@ import os
 import sys
 import time
 import argparse
-from class_metabot import *
+from chosun_ad_bot import *
 
 """parsing and configuration"""
 def parse_args()->argparse:
@@ -20,7 +20,7 @@ def extr_meta_data(class_name)->list:
  	# base_folder_path = '/home/soopil/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # server202 account
 	base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
 
-	bot = MetaBot(base_folder_path)
+	bot = ADBrainMRI(base_folder_path)
 	meta_list = bot.MRI_chosun(class_name)
 	print(class_name, len(meta_list), meta_list)
 	del bot
@@ -33,7 +33,7 @@ def chosun_MRI_pipeline(args)->None:
 
 	# is_remove_exist_folder = True
 	is_remove_exist_folder = False
-	bot = MetaBot('.')
+	bot = ADBrainMRI('.')
 
 	# need to change the result file name according to the pipeline options.
 	result_file_name = 'chosun_MRI_pipeline_finish_list_' + str(index)+'_'+str(sub_index)+'_'+str(sub_divide_num-1)
