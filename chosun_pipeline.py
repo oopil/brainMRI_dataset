@@ -36,6 +36,7 @@ def chosun_MRI_pipeline(args)->None:
 	bot = ADBrainMRI('.')
 
 	# need to change the result file name according to the pipeline options.
+	target_file ='label/rh.entorhinal_exvivo.label'
 	result_file_name = 'chosun_MRI_pipeline_finish_list_' + str(index)+'_'+str(sub_index)+'_'+str(sub_divide_num-1)
 	contents = []
 	if bot.is_exist(result_file_name):
@@ -60,6 +61,8 @@ def chosun_MRI_pipeline(args)->None:
 		assert False
 
 	batch_data_num = len(meta_data_list)
+	subj_to_process_list = []
+	subj_not_processd_list = []
 	for i, subj in enumerate(meta_data_list):
 		subj_name = subj[1]
 		name = subj_name + '\n'
@@ -71,7 +74,7 @@ def chosun_MRI_pipeline(args)->None:
 		result_folder_name = 'freesurfer'
 		subj_dir_path = os.path.join(subj[0], subj[1])
 		result_folder_path = os.path.join(subj_dir_path, result_folder_name)
-		target_output_file_path = os.path.join(result_folder_path, 'label/rh.entorhinal_exvivo.label')
+		target_output_file_path = os.path.join(result_folder_path, target_file)
 
 		# /home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0/ADD/T1sag/14051002/freesurfer/label/rh.entorhinal_exvivo.label 
 		# this is the path of last output file.
@@ -89,9 +92,35 @@ def chosun_MRI_pipeline(args)->None:
 			os.system(rm_command)
 		
 		print('subject {} has not been processed completely.'.format(subj_name))
+		subj_to_process_list.append(subj[1])
 		chosun_MRI_preprocess(subj[0], subj[1], subj[2])
 		# fd.writelines(subj_name+'\n')
 		# assert False
+
+	for i, subj in enumerate(meta_data_list):
+		subj_name = subj[1]
+		name = subj_name + '\n'
+		if name in contents:
+			print('this subj is already processed.', subj_name)
+			continue
+
+		result_folder_name = 'freesurfer'
+		subj_dir_path = os.path.join(subj[0], subj[1])
+		result_folder_path = os.path.join(subj_dir_path, result_folder_name)
+		target_output_file_path = os.path.join(result_folder_path, target_file)
+
+		if bot.is_exist(target_output_file_path):
+			print('Output file of the last process is already exist.')
+			print('this subj is already processed.', subj_name)
+			continue
+		print('subject {} has not been processed completely.'.format(subj_name))
+		subj_not_processd_list.append(subj[1])
+	# fd.writelines(subj_name+'\n')
+	# assert False
+	print('subject list to run pipelin : ')
+	print(subj_to_process_list)
+	print('subject list which failed to run pipeline : ')
+	print(subj_not_processd_list)
 
 	fd.close()
 	fd = open(result_file_name, 'rt')
