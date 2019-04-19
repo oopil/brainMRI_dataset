@@ -10,6 +10,7 @@ def parse_args()->argparse:
 	parser.add_argument('--index', type=int, default='0', help='the index of class from 0 to 3')
 	parser.add_argument('--sub_divide_num', type=int, default='1', help='the number to divide the group to run multiple pipeline in parallel way')
 	parser.add_argument('--sub_index', type=int, default='0', help='the index of group inside the class')
+	parser.add_argument('--no_is_running', type=bool, default=False)
 	return parser.parse_args()
 
 def extr_meta_data(class_name)->list:
@@ -30,6 +31,7 @@ def chosun_MRI_pipeline(args)->None:
 	index = args.index
 	sub_index = args.sub_index
 	sub_divide_num = args.sub_divide_num
+	no_is_running = args.no_is_running
 
 	# is_remove_exist_folder = True
 	is_remove_exist_folder = False
@@ -62,7 +64,7 @@ def chosun_MRI_pipeline(args)->None:
 
 	batch_data_num = len(meta_data_list)
 	subj_to_process_list = []
-	subj_not_processd_list = []
+	subj_not_processed_list = []
 	for i, subj in enumerate(meta_data_list):
 		subj_name = subj[1]
 		name = subj_name + '\n'
@@ -93,7 +95,7 @@ def chosun_MRI_pipeline(args)->None:
 		
 		print('subject {} has not been processed completely.'.format(subj_name))
 		subj_to_process_list.append(subj[1])
-		chosun_MRI_preprocess(subj[0], subj[1], subj[2])
+		chosun_MRI_preprocess(subj[0], subj[1], subj[2], False)
 		# fd.writelines(subj_name+'\n')
 		# assert False
 
@@ -114,13 +116,18 @@ def chosun_MRI_pipeline(args)->None:
 			print('this subj is already processed.', subj_name)
 			continue
 		print('subject {} has not been processed completely.'.format(subj_name))
-		subj_not_processd_list.append(subj[1])
+		subj_not_processed_list.append(subj[1])
+		if no_is_running:
+			chosun_MRI_preprocess(subj[0], subj[1], subj[2], no_is_running)
+
 	# fd.writelines(subj_name+'\n')
 	# assert False
 	print('subject list to run pipelin : ')
 	print(subj_to_process_list)
 	print('subject list which failed to run pipeline : ')
-	print(subj_not_processd_list)
+	print(subj_not_processed_list)
+
+
 
 	fd.close()
 	fd = open(result_file_name, 'rt')
@@ -129,7 +136,7 @@ def chosun_MRI_pipeline(args)->None:
 	del bot
 	return
 
-def chosun_MRI_preprocess(folder_path, subj_name, input_image)->None:
+def chosun_MRI_preprocess(folder_path, subj_name, input_image, no_is_running)->None:
 	print('run the pipeline for chosun univ MRI data.')
 	result_folder_name = 'freesurfer'
 	subj_dir_path = os.path.join(folder_path, subj_name)
