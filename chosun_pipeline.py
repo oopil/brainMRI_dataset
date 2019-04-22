@@ -94,18 +94,17 @@ def chosun_MRI_pipeline(args)->None:
 			os.system(rm_command)
 		
 		print('subject {} has not been processed completely.'.format(subj_name))
-		subj_to_process_list.append(subj[1])
-		chosun_MRI_preprocess(subj[0], subj[1], subj[2], False)
+		subj_to_process_list.append(subj)
+		if no_is_running:
+			chosun_MRI_preprocess(subj[0], subj[1], subj[2], no_is_running = no_is_running)
+		else:
+			chosun_MRI_preprocess(subj[0], subj[1], subj[2], no_is_running = False)
 		# fd.writelines(subj_name+'\n')
 		# assert False
 
-	for i, subj in enumerate(meta_data_list):
+	for i, subj in enumerate(subj_to_process_list):
 		subj_name = subj[1]
 		name = subj_name + '\n'
-		if name in contents:
-			print('this subj is already processed.', subj_name)
-			continue
-
 		result_folder_name = 'freesurfer'
 		subj_dir_path = os.path.join(subj[0], subj[1])
 		result_folder_path = os.path.join(subj_dir_path, result_folder_name)
@@ -115,13 +114,11 @@ def chosun_MRI_pipeline(args)->None:
 			print('Output file of the last process is already exist.')
 			print('this subj is already processed.', subj_name)
 			continue
+
 		print('subject {} has not been processed completely.'.format(subj_name))
 		subj_not_processed_list.append(subj[1])
-		if no_is_running:
-			chosun_MRI_preprocess(subj[0], subj[1], subj[2], no_is_running)
 
-	# fd.writelines(subj_name+'\n')
-	# assert False
+
 	print('subject list to run pipelin : ')
 	print(subj_to_process_list)
 	print('subject list which failed to run pipeline : ')
@@ -142,8 +139,12 @@ def chosun_MRI_preprocess(folder_path, subj_name, input_image, no_is_running)->N
 	subj_dir_path = os.path.join(folder_path, subj_name)
 	result_folder_path = os.path.join(subj_dir_path, result_folder_name)
 	options = ['-autorecon1','-autorecon2-inflate1', '-autorecon2', '-autorecon3']
-	is_run = [False, False, True, True]
 
+	if no_is_running:
+		for i in range(len(options)):
+			options[i] = options[i] + ' -no-isrunning'
+
+	is_run = [False, False, True, True]
 	command = [\
 	'recon-all '+'-i '+ input_image + ' -s ' + result_folder_name + ' -sd '+ subj_dir_path + ' ' + options[0],\
 	'recon-all '+' -s ' + result_folder_name + ' -sd '+ subj_dir_path + ' ' + options[1],\
