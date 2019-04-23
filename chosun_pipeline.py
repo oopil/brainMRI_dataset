@@ -83,7 +83,7 @@ def chosun_MRI_pipeline(args)->None:
 		# if this file exist, the pipeline is done correctly.
 
 		if bot.is_exist(target_output_file_path):
-			print('Output file of the last process is already exist.')
+			print('Output file of the last process already exists.')
 			print('this subj is already processed.', subj_name)
 			continue
 
@@ -119,7 +119,7 @@ def chosun_MRI_pipeline(args)->None:
 		subj_not_processed_list.append(subj[1])
 
 
-	print('subject list to run pipelin : ')
+	print('subject list to run pipeline : ')
 	print(subj_to_process_list)
 	print('subject list which failed to run pipeline : ')
 	print(subj_not_processed_list)

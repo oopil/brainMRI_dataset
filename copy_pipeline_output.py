@@ -13,8 +13,16 @@ def parse_args() -> argparse:
     # base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
     parser.add_argument('--base_folder_path', type=str, default='/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3')
     parser.add_argument('--file_to_copy', type=str, default=\
-        'brainmask.auto.nii T1.nii aparc+aseg.nii aparc.DKTatlas+aseg.nii norm.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii orig.nii aseg.auto_noCCseg.nii orig_nu.nii wmparc.nii aseg.nii')
-    # 'T1.nii aseg.presurf.hypos.nii filled.nii rh.ribbon.nii aparc+aseg.nii aseg.presurf.nii lh.ribbon.nii ribbon.nii aparc.DKTatlas+aseg.nii brain.finalsurfs.nii norm.nii wm.asegedit.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii brainmask.auto.nii orig.nii wm.seg.nii aseg.auto_noCCseg.nii brainmask.nii orig_nu.nii wmparc.nii aseg.nii ctrl_pts.nii rawavg.nii'
+        'brainmask.auto.nii T1.nii aparc+aseg.nii aparc.DKTatlas+aseg.nii '+\
+        'norm.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii '+\
+        'orig.nii aseg.auto_noCCseg.nii orig_nu.nii wmparc.nii aseg.nii')
+    # 'T1.nii aseg.presurf.hypos.nii filled.nii rh.ribbon.nii
+    # aparc+aseg.nii aseg.presurf.nii lh.ribbon.nii ribbon.nii
+    # aparc.DKTatlas+aseg.nii brain.finalsurfs.nii norm.nii
+    # wm.asegedit.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii
+    # aseg.auto.nii brainmask.auto.nii orig.nii wm.seg.nii
+    # aseg.auto_noCCseg.nii brainmask.nii orig_nu.nii wmparc.nii
+    # aseg.nii ctrl_pts.nii rawavg.nii'
     print(parser.parse_args())
     return parser.parse_args()
 
@@ -52,18 +60,6 @@ def chosun_MRI_copy_use_only_pipeline(args) -> None:
     total_meta_data_list = extr_meta_data(class_name[0])
     total_data_count = len(total_meta_data_list)
     bot.copy_only_useful_file(copy_dir_path, total_meta_data_list, file_to_copy_list)
-
-
-def test():
-    test = ['a', 'b', 'c', 'd']
-    fd = open('test_file', 'a+t')
-    for i in test:
-        fd.writelines(i + '\n')
-    fd.close()
-    fd = open('test_file', 'r')
-    contents = fd.readlines()
-    print(contents)
-    fd.close()
 
 def print_list(l:list)->None:
     for line in l:

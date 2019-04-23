@@ -8,8 +8,6 @@ def parse_args()->argparse:
     parser.add_argument('--mgz_folder_path', type=str, default='no path', help='the path of folder to convert to nifti files')
     return parser.parse_args()
 
-
-
 def convert_all(folder_path):
 	old_path = folder_path
 	print(old_path)
@@ -24,6 +22,8 @@ def convert_all(folder_path):
 	for file_name in file_list:
 		if file_name[-3:] != 'mgz':
 			print(file_name, 'is not mgz format. : ', file_name[-4:] )
+			continue
+		if file_name[:-4] == 'ctrl_pts':
 			continue
 		new_file_name = file_name[:-4] + '.nii'
 		new_file_path = os.path.join(nii_dir_path, new_file_name)
