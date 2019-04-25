@@ -51,21 +51,31 @@ def chosun_MRI_copy_use_only_pipeline(args) -> None:
     print(base_folder_path)
 
     # is_remove_exist_folder = True
-    is_remove_exist_folder = False
-    bot = ADBrainMRI('.')
-    copy_dir_path = bot.copy_directory_only(base_folder_path)
+    is_remove_exist_folder = True
+    # copy_dir_path = bot.copy_directory_only(base_folder_path)
 
-    # assert False
+
+    bot = ADBrainMRI('.')
+    # if is_remove_exist_folder:
+    #
+    #     pass
     class_name = ['aAD', 'ADD', 'mAD', 'NC']
-    total_meta_data_list = extr_meta_data(class_name[0], base_folder_path)
-    total_data_count = len(total_meta_data_list)
+    # class_path = bot.join_path(base_folder_path, name)
+    copy_dir_path = bot.copy_directory_only(base_folder_path)
+    # assert False
+    for name in class_name:
+        class_meta_data_list = extr_meta_data(name, base_folder_path)
+        class_data_count = len(class_meta_data_list)
+        copy_class_dir_path = bot.join_path(copy_dir_path, name)
+        bot.copy_only_useful_file(copy_class_dir_path, class_meta_data_list, file_to_copy_list)
+        assert False
     # test_dir_path = ['/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3/',\
     #                  '14062105',''
     #                  '/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3/14062105/T1.nii.gz'\
     #                  ]
     # test_data_count = 1
     # bot.copy_only_useful_file(copy_dir_path, [test_dir_path], file_to_copy_list)
-    bot.copy_only_useful_file(copy_dir_path, total_meta_data_list, file_to_copy_list)
+
 
 def print_list(l:list)->None:
     for line in l:

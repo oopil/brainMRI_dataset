@@ -57,24 +57,25 @@ class ADBrainMRI(MetaBot):
         # print(new_line)
         return meta_list
 #%%
-    def find_all_folder_chosun_AD(self, path):
+    def find_all_folder_chosun_AD(self, path, depth):
         file_list = self.get_file_list(path)
         for file_name in file_list:
             new_path = self.join_path(path, file_name)
             if self.is_dir(new_path):
                 self.fld_list.append(new_path)
-                # self.find_all_folder_chosun_AD(new_path)
+                if depth:
+                    self.find_all_folder_chosun_AD(new_path, depth-1)
 
     def copy_directory_only(self, base_folder_path):
         self.base_folder_path = base_folder_path
-        self.find_all_folder_chosun_AD(self.base_folder_path)
+        self.find_all_folder_chosun_AD(self.base_folder_path, 2)
         dir_path_list = self.get_fld_list()
         # print("/".join(folder_path_split))
         # print(folder_path_split)
         # print(self.base_folder_path)
 
         self.copy_folder_path = self.convert_path(self.base_folder_path, 'empty_copy')
-        print(self.copy_folder_path)
+        print('copy directory path : ',self.copy_folder_path)
         self.make_directory_sub(self.copy_folder_path)
 
         for dir_path in dir_path_list:
@@ -82,11 +83,17 @@ class ADBrainMRI(MetaBot):
             # print(dir_path)
             # print(self.convert_path(dir_path, 'empty_copy'))
             new_dir_path = self.convert_path(dir_path, 'empty_copy')
-            processed_dir_path = self.join_path(new_dir_path, 'processed')
             self.make_directory_sub(new_dir_path)
-            self.make_directory_sub(processed_dir_path)
             print(dir_path)
             print(new_dir_path)
+            #/home/sp/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0/mAD/T1sag
+            #/home/sp/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0_empty_copy/mAD/T1sag
+
+            path_list = dir_path.split('/')
+            if len(path_list[-1]) > 5:
+                processed_dir_path = self.join_path(new_dir_path, 'processed')
+                self.make_directory_sub(processed_dir_path)
+                print(processed_dir_path)
         return self.copy_folder_path
 
     def convert_path(self, path, new_dir_name):
@@ -99,15 +106,29 @@ class ADBrainMRI(MetaBot):
 
         folder_path_split[-1] = folder_path_split[-1] + '_' + new_dir_name
         folder_path_split = folder_path_split + path_split[i+1:]
+        try:
+            folder_path_split.remove('T1sag')
+        except ValueError:
+            pass
+        # print('remove t1sag ',self.remove_t1sag(folder_path_split))
         new_dir_path = "/" + "/".join(folder_path_split)
+        # print(folder_path_split)
+        # print(path_split[i+1:])
+        # print(new_dir_path)
+        # assert False
         return new_dir_path
+
+    def remove_t1sag(self, path_split):
+        if 'T1sag' in path_split:
+            return path_split.remove('T1sag')
+        return path_split
 
     def copy_only_useful_file(self, copy_dir_path, subj_list:list, file_list:list)->None:
         target_dir = 'freesurfer/mri/nifti'
         target_copy_dir = 'processed'
         for subj in subj_list:
             folder_path, subj_name, _ = subj
-            subj_dir = os.path.join(self.base_folder_path, subj_name, target_dir)
+            subj_dir = os.path.join(folder_path, subj_name, target_dir)
             subj_copy_dir = os.path.join(copy_dir_path, subj_name, target_copy_dir)
             for file in file_list:
                 file_path = os.path.join(subj_dir, file)
