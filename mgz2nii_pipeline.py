@@ -16,8 +16,8 @@ def extr_meta_data(class_name)->list:
 	# base_folder_path = '/home/sp/Datasets/MRI_chosun/test_sample_2'
 	base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
 
-	bot = MetaBot(base_folder_path)
-	meta_list = bot.ADBrainMRI(class_name)
+	bot = ADBrainMRI(base_folder_path)
+	meta_list = bot.MRI_chosun(class_name)
 	print(class_name, len(meta_list), meta_list)
 	del bot
 	return meta_list
