@@ -119,11 +119,11 @@ class FileCopy:
 		pass
 
 	def copy_file(self, path):
-		sys = System('copy', path)
+		sys = System('cp', path)
 		sys.sub_run()
 
 	def copy_dir(self, path):
-		sys = System('copy -r', path)
+		sys = System('cp -r', path)
 		sys.sub_run()
 
 #%%
