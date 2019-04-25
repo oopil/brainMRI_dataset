@@ -68,7 +68,7 @@ def chosun_MRI_copy_use_only_pipeline(args) -> None:
         class_data_count = len(class_meta_data_list)
         copy_class_dir_path = bot.join_path(copy_dir_path, name)
         bot.copy_only_useful_file(copy_class_dir_path, class_meta_data_list, file_to_copy_list)
-        assert False
+        # assert False
     # test_dir_path = ['/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3/',\
     #                  '14062105',''
     #                  '/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3/14062105/T1.nii.gz'\
