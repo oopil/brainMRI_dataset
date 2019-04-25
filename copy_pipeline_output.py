@@ -11,7 +11,7 @@ def parse_args() -> argparse:
     # base_folder_path = '/user/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # server 144 setting
     # base_folder_path = '/home/soopil/Datasets/MRI_chosun/ADAI_MRI_Result_V1_0' # server202 account
     # base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
-    parser.add_argument('--base_folder_path', type=str, default='/home/sp/Datasets/MRI_chosun/test_sample_2/freesurfer_2_and_3')
+    parser.add_argument('--base_folder_path', type=str, default='/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0')
     parser.add_argument('--file_to_copy', type=str, default=\
         'brainmask.auto.nii T1.nii aparc+aseg.nii aparc.DKTatlas+aseg.nii '+\
         'norm.nii aparc.a2009s+aseg.nii brain.nii nu.nii wm.nii aseg.auto.nii '+\
