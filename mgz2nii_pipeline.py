@@ -2,7 +2,7 @@ import os
 import sys
 import time
 import argparse
-from class_metabot import *
+from chosun_ad_bot import *
 from mgz2nii import *
 
 def parse_args()->argparse:
@@ -17,14 +17,14 @@ def extr_meta_data(class_name)->list:
 	base_folder_path = '/home/public/Dataset/MRI_chosun/ADAI_MRI_Result_V1_0'  # server 186 setting
 
 	bot = MetaBot(base_folder_path)
-	meta_list = bot.MRI_chosun(class_name)
+	meta_list = bot.ADBrainMRI(class_name)
 	print(class_name, len(meta_list), meta_list)
 	del bot
 	return meta_list
 
 def chosun_MRI_mgz2nii_pipeline(index)->None:
 	is_convert = True
-	is_remove_exist_folder = True
+	is_remove_exist_folder = False
 
 	bot = MetaBot('.')
 	result_file_name = 'chosun_MRI_pipeline_mgz2nii_list_' + str(index)
