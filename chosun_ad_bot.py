@@ -22,9 +22,9 @@ class ADBrainMRI(MetaBot):
                 assert False
             folder_path = class_path
             subj_name = subj
-            input = T1_path
+            input_path = T1_path
 
-            new_line = [folder_path, subj_name, input]
+            new_line = [folder_path, subj_name, input_path]
             meta_list.append(new_line)
         # print(new_line)
         return meta_list
@@ -33,28 +33,39 @@ class ADBrainMRI(MetaBot):
         '''
         find all subject name, input file path
         :param class_name:
-        :return: [folder_path, subj_name, input] list
+        :return: [folder_path, subj_name, input, seg_input] list
         '''
         class_path = self.join_path(self.base_path, class_name)
-        class_path = self.join_path(class_path, 'T1sag')
         subj_name_list = self.get_file_list(class_path)
         # print(subj_name_list)
         meta_list = []
+        excluded_list = []
         for subj in sorted(subj_name_list):
             subj_path = self.join_path(class_path, subj)
+            subj_path = self.join_path(subj_path, 'processed')
             if not self.is_dir(subj_path):
                 continue
-            T1_path = self.join_path(subj_path, 'T1.nii.gz')
+            T1_path = self.join_path(subj_path, 'brain.nii')
+            label_path = self.join_path(subj_path, 'aparc.DKTatlas+aseg.nii')
+            # print(T1_path)
+            # print(label_path)
             if not self.is_exist(T1_path):
                 print('T1 image does not exists.', T1_path, subj)
                 assert False
+            if not self.is_exist(label_path):
+                print('Label does not exists.', T1_path, subj)
+                print('Skip this Subject.')
+                excluded_list.append([class_name, subj])
+                continue
             folder_path = class_path
             subj_name = subj
-            input = T1_path
+            input_path = T1_path
 
-            new_line = [folder_path, subj_name, input]
+            new_line = [folder_path, subj_name, input_path, label_path]
             meta_list.append(new_line)
-        # print(new_line)
+            # print(new_line)
+        print('Subject which is not included : {}'.format(excluded_list))
+        # assert False
         return meta_list
 #%%
     def find_all_folder_chosun_AD(self, path, depth):
