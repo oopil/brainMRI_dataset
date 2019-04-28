@@ -22,7 +22,7 @@ class Printer():
 			
 #%%
 def print_by_i(string,i):
-	 #assert string != None
+	#assert string != None
 	if string == None:
 		print('the string is NoneType in print_by_i')
 		return
@@ -123,7 +123,7 @@ class FileCopy:
 		sys.sub_run()
 
 	def copy_dir(self, path):
-		sys = System('cp -r', path)
+		sys=System('cp -r', path)
 		sys.sub_run()
 
 #%%
